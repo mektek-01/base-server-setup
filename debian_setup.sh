@@ -50,11 +50,11 @@ apt update
 #Install required packages
 echo "Installing base packages..."
 apt install -y sudo curl wget git build-essential apt-transport-https ca-certificates \
-    gnupg lsb-release unzip fontconfig software-properties-common \
+    gnupg lsb-release unzip fontconfig \
     htop fastfetch ncdu tmux screen net-tools dnsutils tree zip \
     iotop nload iftop fail2ban openssh-server mosh rsync \
-    ripgrep fd-find bat exa fzf jq python3-pip python3-venv \
-    mlocate neofetch ranger vim\
+    ripgrep fd-find bat fzf jq python3-pip python3-venv \
+    ranger vim\
     golang-go btop\
     ethtool smartmontools lm-sensors \
     acl attr mc rdiff-backup logrotate molly-guard needrestart pwgen \
@@ -75,13 +75,6 @@ ln -s /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
 
 # Setup modern alternatives
 echo "Setting up modern command-line tools..."
-# exa as alternative to ls
-if command -v exa >/dev/null; then
-    echo 'alias ls="exa"' >> /etc/bash.bashrc
-    echo 'alias ll="exa -l"' >> /etc/bash.bashrc
-    echo 'alias la="exa -la"' >> /etc/bash.bashrc
-    echo 'alias lt="exa -T"' >> /etc/bash.bashrc
-fi
 
 # fd-find as alternative to find
 if command -v fdfind >/dev/null; then
@@ -256,11 +249,6 @@ alias mkdir='mkdir -p'
 alias dc='docker-compose'
 alias dps='docker ps'
 alias dimg='docker images'
-alias vim='nvim'
-alias glxinfo='glxinfo | grep -i "direct rendering"'
-alias xeyes='DISPLAY=:0 xeyes'
-alias xclock='DISPLAY=:0 xclock'
-alias xterm='DISPLAY=:0 xterm'
 
 # Enable terminal colors
 export TERM=xterm-256color
