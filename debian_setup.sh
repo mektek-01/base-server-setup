@@ -145,27 +145,27 @@ apt update
 apt install -y tailscale
 
 # Create fonts directory
-echo "Installing Nerd Fonts..."
-mkdir -p /usr/local/share/fonts/nerd-fonts
-mkdir -p /tmp/fonts
+#echo "Installing Nerd Fonts..."
+#mkdir -p /usr/local/share/fonts/nerd-fonts
+#mkdir -p /tmp/fonts
 
 # Install Hack Nerd Font
-echo "Downloading Hack Nerd Font..."
-wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Hack.zip -O /tmp/fonts/Hack.zip
-unzip -q /tmp/fonts/Hack.zip -d /usr/local/share/fonts/nerd-fonts/Hack
+#echo "Downloading Hack Nerd Font..."
+#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Hack.zip -O /tmp/fonts/Hack.zip
+#unzip -q /tmp/fonts/Hack.zip -d /usr/local/share/fonts/nerd-fonts/Hack
 
 # Install JetBrains Mono Nerd Font
-echo "Downloading JetBrains Mono Nerd Font..."
-wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip -O /tmp/fonts/JetBrainsMono.zip
-unzip -q /tmp/fonts/JetBrainsMono.zip -d /usr/local/share/fonts/nerd-fonts/JetBrainsMono
+#echo "Downloading JetBrains Mono Nerd Font..."
+#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip -O /tmp/fonts/JetBrainsMono.zip
+#unzip -q /tmp/fonts/JetBrainsMono.zip -d /usr/local/share/fonts/nerd-fonts/JetBrainsMono
 
 # Install Fira Code Nerd Font
-echo "Downloading Fira Code Nerd Font..."
-wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip -O /tmp/fonts/FiraCode.zip
-unzip -q /tmp/fonts/FiraCode.zip -d /usr/local/share/fonts/nerd-fonts/FiraCode
+#echo "Downloading Fira Code Nerd Font..."
+#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip -O /tmp/fonts/FiraCode.zip
+#unzip -q /tmp/fonts/FiraCode.zip -d /usr/local/share/fonts/nerd-fonts/FiraCode
 
 # Update font cache
-fc-cache -fv
+#fc-cache -fv
 
 # Add user to sudo and other groups
 echo "Adding $USERNAME to necessary groups..."
