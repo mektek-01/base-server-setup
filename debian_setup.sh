@@ -216,10 +216,10 @@ EOF
 USER_HOME=$(eval echo ~$USERNAME)
 
 # Modify .bashrc to add pfetch and set JetBrains Mono
-echo "Configuring .bashrc for $USERNAME..."
-USER_HOME=$(eval echo ~$USERNAME)
-echo -e "\n# Run pfetch on terminal startup\npfetch" >> $USER_HOME/.bashrc
-echo -e "\n# Set terminal font to JetBrains Mono Nerd Font\nGSETTINGS_SCHEMA=org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/\nprofile=\$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d \"'\")\ngsettings set \"\$GSETTINGS_SCHEMA\"\"\$profile\"/font 'JetBrainsMono Nerd Font 12'" >> $USER_HOME/.bashrc
+#echo "Configuring .bashrc for $USERNAME..."
+#USER_HOME=$(eval echo ~$USERNAME)
+#echo -e "\n# Run pfetch on terminal startup\npfetch" >> $USER_HOME/.bashrc
+#echo -e "\n# Set terminal font to JetBrains Mono Nerd Font\nGSETTINGS_SCHEMA=org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/\nprofile=\$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d \"'\")\ngsettings set \"\$GSETTINGS_SCHEMA\"\"\$profile\"/font 'JetBrainsMono Nerd Font 12'" >> $USER_HOME/.bashrc
 
 # Set better history control
 HISTCONTROL=ignoreboth
