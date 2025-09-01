@@ -54,7 +54,7 @@ apt install -y sudo curl wget git build-essential apt-transport-https ca-certifi
     htop fastfetch ncdu tmux screen net-tools dnsutils tree zip \
     iotop nload iftop fail2ban openssh-server mosh rsync \
     ripgrep fd-find bat fzf jq python3-pip python3-venv \
-    ranger vim emacs \
+    ranger vim emacs nfs-common rpcbind\
     golang-go btop \
     ethtool smartmontools lm-sensors \
     acl attr mc rdiff-backup logrotate molly-guard needrestart pwgen \
