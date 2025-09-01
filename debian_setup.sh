@@ -54,8 +54,8 @@ apt install -y sudo curl wget git build-essential apt-transport-https ca-certifi
     htop fastfetch ncdu tmux screen net-tools dnsutils tree zip \
     iotop nload iftop fail2ban openssh-server mosh rsync \
     ripgrep fd-find bat fzf jq python3-pip python3-venv \
-    ranger vim\
-    golang-go btop\
+    ranger vim emacs \
+    golang-go btop \
     ethtool smartmontools lm-sensors \
     acl attr mc rdiff-backup logrotate molly-guard needrestart pwgen \
     apt-listchanges unattended-upgrades plocate debsums
@@ -70,21 +70,8 @@ Unattended-Upgrade::Automatic-Reboot "true";
 EOF
 systemctl enable --now unattended-upgrades.service
 
-# Setup bat alternative for cat with prettier output
-ln -s /usr/bin/batcat /usr/local/bin/bat 2>/dev/null || true
-
 # Setup modern alternatives
 echo "Setting up modern command-line tools..."
-
-# fd-find as alternative to find
-if command -v fdfind >/dev/null; then
-    ln -s $(which fdfind) /usr/local/bin/fd 2>/dev/null || true
-fi
-
-# Install pfetch
-echo "Installing pfetch..."
-wget -q https://raw.githubusercontent.com/dylanaraps/pfetch/master/pfetch -O /usr/local/bin/pfetch
-chmod +x /usr/local/bin/pfetchcat /
 
 #Configure vim with sensible defaults
 cat > /etc/vim/vimrc.local << 'EOF'
@@ -144,34 +131,11 @@ curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.l
 apt update
 apt install -y tailscale
 
-# Create fonts directory
-#echo "Installing Nerd Fonts..."
-#mkdir -p /usr/local/share/fonts/nerd-fonts
-#mkdir -p /tmp/fonts
-
-# Install Hack Nerd Font
-#echo "Downloading Hack Nerd Font..."
-#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Hack.zip -O /tmp/fonts/Hack.zip
-#unzip -q /tmp/fonts/Hack.zip -d /usr/local/share/fonts/nerd-fonts/Hack
-
-# Install JetBrains Mono Nerd Font
-#echo "Downloading JetBrains Mono Nerd Font..."
-#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/JetBrainsMono.zip -O /tmp/fonts/JetBrainsMono.zip
-#unzip -q /tmp/fonts/JetBrainsMono.zip -d /usr/local/share/fonts/nerd-fonts/JetBrainsMono
-
-# Install Fira Code Nerd Font
-#echo "Downloading Fira Code Nerd Font..."
-#wget -q https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/FiraCode.zip -O /tmp/fonts/FiraCode.zip
-#unzip -q /tmp/fonts/FiraCode.zip -d /usr/local/share/fonts/nerd-fonts/FiraCode
-
-# Update font cache
-#fc-cache -fv
-
 # Add user to sudo and other groups
 echo "Adding $USERNAME to necessary groups..."
 usermod -aG sudo,adm,docker,dialout,plugdev,netdev,audio,video "$USERNAME"
 
-# Configure sudo with insults3M0De9XyM3Pl
+# Configure sudo with insults
 echo "Configuring sudo with insults..."
 echo 'Defaults insults' > /etc/sudoers.d/insults
 echo 'Defaults timestamp_timeout=30' >> /etc/sudoers.d/insults
@@ -215,24 +179,12 @@ EOF
 # User HOME directory
 USER_HOME=$(eval echo ~$USERNAME)
 
-# Modify .bashrc to add pfetch and set JetBrains Mono
-#echo "Configuring .bashrc for $USERNAME..."
-#USER_HOME=$(eval echo ~$USERNAME)
-#echo -e "\n# Run pfetch on terminal startup\npfetch" >> $USER_HOME/.bashrc
-#echo -e "\n# Set terminal font to JetBrains Mono Nerd Font\nGSETTINGS_SCHEMA=org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/\nprofile=\$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d \"'\")\ngsettings set \"\$GSETTINGS_SCHEMA\"\"\$profile\"/font 'JetBrainsMono Nerd Font 12'" >> $USER_HOME/.bashrc
-
 # Set better history control
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
 HISTFILESIZE=20000
 shopt -s histappend
 shopt -s checkwinsize
-
-# Improved prompt with git branch display
-parse_git_branch() {
-    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-}
-PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;33m\] $(parse_git_branch)\[\033[00m\]\$ '
 
 # Useful aliases
 alias update='sudo apt update && sudo apt upgrade -y'
@@ -249,59 +201,13 @@ alias mkdir='mkdir -p'
 alias dc='docker-compose'
 alias dps='docker ps'
 alias dimg='docker images'
+alias lazydocker='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /yourpath/config:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 # Enable terminal colors
 export TERM=xterm-256color
 
 # Set proper permissions for user's home directory
 chown -R $USERNAME:$USERNAME $USER_HOME
-
-  {
-
-  typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
-    status                  # exit code of the last command
-    background_jobs         # presence of background jobs
-    direnv                  # direnv status
-    asdf                    # asdf version manager
-    virtualenv              # python virtual environment
-    anaconda                # conda environment
-    nodenv                  # node.js version
-    node_version            # node.js version
-    go_version              # go version
-    rust_version            # rustc version
-    dotnet_version          # .NET version
-    php_version             # php version
-    laravel_version         # laravel php framework version
-    java_version            # java version
-    package                 # name@version from package.json
-    load                    # CPU load
-    disk_usage              # disk usage
-    ram                     # free RAM
-    time                    # current time
-  )
-
-  # OS identifier
-  typeset -g POWERLEVEL9K_OS_ICON_CONTENT_EXPANSION='%B🐧%b'
-
-  # Directory truncation
-  typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_last
-  typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
-
-  # VCS config
-  typeset -g POWERLEVEL9K_VCS_BRANCH_ICON='\uF126 '
-  typeset -g POWERLEVEL9K_VCS_UNTRACKED_ICON='?'
-
-  # Time format
-  typeset -g POWERLEVEL9K_TIME_FORMAT='%D{%H:%M:%S}'
-
-  # Set colors
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=76
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=196
-}
-
-(( ${#p10k_config_opts} )) && setopt ${p10k_config_opts[@]}
-'builtin' 'unset' 'p10k_config_opts'
-EOF
 
 # Enable and start services
 echo "Enabling and starting services..."
