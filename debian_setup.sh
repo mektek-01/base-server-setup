@@ -179,6 +179,7 @@ EOF
 # User HOME directory
 USER_HOME=$(eval echo ~$USERNAME)
 
+cat >> /$USER_HOME/.bashrc << EOF
 # Set better history control
 HISTCONTROL=ignoreboth
 HISTSIZE=10000
@@ -205,6 +206,7 @@ alias lazydocker='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.so
 
 # Enable terminal colors
 export TERM=xterm-256color
+EOF
 
 # Set proper permissions for user's home directory
 chown -R $USERNAME:$USERNAME $USER_HOME
