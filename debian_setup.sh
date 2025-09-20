@@ -14,26 +14,10 @@ if ! id "$USERNAME" &>/dev/null; then
     exit 1
 fi
 
-# Ask about firewall setup
-read -p "Configure UFW firewall? (y/n): " SETUP_UFW
-SETUP_UFW=$(echo "$SETUP_UFW" | tr '[:upper:]' '[:lower:]')
-
-# Ask about monitoring setup
-read -p "Install monitoring tools (Netdata)? (y/n): " INSTALL_MONITORING
-INSTALL_MONITORING=$(echo "$INSTALL_MONITORING" | tr '[:upper:]' '[:lower:]')
-
 echo "========================================================"
 echo "Debian 12 Post-Installation Setup Script"
 echo "========================================================"
 echo "Setting up system for user: $USERNAME"
-echo
-
-if [[ "$SETUP_UFW" == "y" ]]; then
-    echo "UFW firewall will be configured"
-fi
-if [[ "$INSTALL_MONITORING" == "y" ]]; then
-    echo "Netdata monitoring will be installed"
-fi
 
 # Get user home directory
 USER_HOME=$(eval echo ~$USERNAME)
@@ -51,14 +35,14 @@ apt update
 echo "Installing base packages..."
 apt install -y sudo curl wget git build-essential apt-transport-https ca-certificates \
     gnupg lsb-release unzip fontconfig \
-    htop fastfetch ncdu tmux screen net-tools dnsutils tree zip \
+    fastfetch ncdu tmux screen net-tools dnsutils tree zip \
     iotop nload iftop fail2ban openssh-server mosh rsync \
     ripgrep fd-find bat fzf jq python3-pip python3-venv \
     ranger vim emacs nfs-common rpcbind\
     golang-go btop \
     ethtool smartmontools lm-sensors \
     acl attr mc rdiff-backup logrotate molly-guard needrestart pwgen \
-    apt-listchanges unattended-upgrades plocate debsums
+    apt-listchanges unattended-upgrades plocate debsums nvtop
 
 # Configure unattended-upgrades
 cat > /etc/apt/apt.conf.d/50unattended-upgrades << EOF
@@ -69,38 +53,6 @@ Unattended-Upgrade::Allowed-Origins {
 Unattended-Upgrade::Automatic-Reboot "true";
 EOF
 systemctl enable --now unattended-upgrades.service
-
-# Setup modern alternatives
-echo "Setting up modern command-line tools..."
-
-#Configure vim with sensible defaults
-cat > /etc/vim/vimrc.local << 'EOF'
-syntax on
-set background=dark
-set number
-set tabstop=4
-set shiftwidth=4
-set expandtab
-set autoindent
-set smartindent
-set ruler
-set ignorecase
-set smartcase
-set hlsearch
-set incsearch
-set showmatch
-set showcmd
-set wrap
-set linebreak
-set scrolloff=3
-set history=1000
-set wildmenu
-set wildmode=longest:full,full
-set backspace=indent,eol,start
-set laststatus=2
-set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-set mouse=a
-EOF
 
 # Install Docker
 echo "Installing Docker..."
@@ -124,43 +76,15 @@ apt update
 #apt update
 apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
 
-# Install Tailscale
-echo "Installing Tailscale..."
-curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
-curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
-apt update
-apt install -y tailscale
-
 # Add user to sudo and other groups
 echo "Adding $USERNAME to necessary groups..."
-usermod -aG sudo,adm,docker,dialout,plugdev,netdev,audio,video "$USERNAME"
+usermod -aG sudo,adm,docker,dialout,plugdev,netdev,audio,video,media "$USERNAME"
 
 # Configure sudo with insults
 echo "Configuring sudo with insults..."
 echo 'Defaults insults' > /etc/sudoers.d/insults
 echo 'Defaults timestamp_timeout=30' >> /etc/sudoers.d/insults
 chmod 440 /etc/sudoers.d/insults
-
-
-# Configure SSH server for security
-echo "Configuring SSH server..."
-cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
-cat >> /etc/ssh/sshd_config << EOF
-
-# Enhanced security settings
-PermitRootLogin no
-PasswordAuthentication yes
-PubkeyAuthentication yes
-PermitEmptyPasswords no
-X11Forwarding no 
-X11DisplayOffset 10
-X11UseLocalhost yes
-AllowTcpForwarding yes
-MaxAuthTries 3
-LoginGraceTime 30
-ClientAliveInterval 300
-ClientAliveCountMax 2
-EOF
 
 # Setup fail2ban for SSH
 echo "Configuring fail2ban for SSH..."
@@ -180,18 +104,11 @@ EOF
 USER_HOME=$(eval echo ~$USERNAME)
 
 cat >> /$USER_HOME/.bashrc << EOF
-# Set better history control
-HISTCONTROL=ignoreboth
-HISTSIZE=10000
-HISTFILESIZE=20000
-shopt -s histappend
-shopt -s checkwinsize
 
 # Useful aliases
 alias update='sudo apt update && sudo apt upgrade -y'
 alias install='sudo apt install -y'
 alias remove='sudo apt remove'
-alias cls='clear'
 alias ports='ss -tuln'
 alias myip='curl http://ipecho.net/plain; echo'
 alias df='df -h'
@@ -202,7 +119,7 @@ alias mkdir='mkdir -p'
 alias dc='docker-compose'
 alias dps='docker ps'
 alias dimg='docker images'
-alias lazydocker='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /yourpath/config:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
+alias lzd='docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock -v /yourpath/config:/.config/jesseduffield/lazydocker lazyteam/lazydocker'
 
 # Enable terminal colors
 export TERM=xterm-256color
@@ -215,8 +132,6 @@ chown -R $USERNAME:$USERNAME $USER_HOME
 echo "Enabling and starting services..."
 systemctl enable docker
 systemctl start docker
-systemctl enable tailscaled
-systemctl start tailscaled
 
 # Clean up
 echo "Cleaning up..."
