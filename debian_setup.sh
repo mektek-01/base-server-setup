@@ -76,6 +76,11 @@ apt update
 #apt update
 apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-buildx-plugin
 
+# Create a dedicated Docker user
+adduser --system --home "" --no-create-home --no-login docker
+# Add docker user to docker group
+usermod -aG docker docker
+
 # Add user to sudo and other groups
 echo "Adding $USERNAME to necessary groups..."
 usermod -aG sudo,adm,docker,dialout,plugdev,netdev,audio,video,media "$USERNAME"
