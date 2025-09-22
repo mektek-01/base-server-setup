@@ -35,8 +35,8 @@ apt update
 echo "Installing base packages..."
 apt install -y sudo curl wget git build-essential apt-transport-https ca-certificates \
     gnupg lsb-release unzip fontconfig \
-    fastfetch ncdu tmux screen net-tools dnsutils tree zip \
-    iotop nload iftop fail2ban openssh-server mosh rsync \
+    fastfetch ncdu tmux net-tools dnsutils tree zip \
+    iotop nload iftop fail2ban openssh-server \
     ripgrep fd-find bat fzf jq python3-pip python3-venv \
     ranger vim emacs nfs-common rpcbind\
     golang-go btop \
